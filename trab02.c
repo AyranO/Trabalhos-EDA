@@ -1,44 +1,70 @@
 #include<stdio.h>
 #include<stdlib.h>
+
+//Registro de dados do cliente, contendo:
+//cpf do cliente, cpf de terceiros, o valor da operação,
+//o tipo de operação efetuada e um ponteiro para o próximo Nó.
 struct node_p{
-    //Registro de dados do cliente, contendo:
-    //cpf do cliente, cpf de terceiros, o valor da operação,
-    //o tipo de operação efetuada e um ponteiro para o próximo Nó.
     long long cpfc,cpft,valor;
     char op;
     struct node_p* next;
 };
+//Deine o registro de dados do cliente como Nó padrão.
 typedef struct node_p node_p;
+
+
 node_p* create_node_p(){
-    //Um auxiliar aloca espaço para um Nó padrão e retorna um endereço para o mesmo.
     node_p* aux;
     aux=malloc(sizeof(node_p));
+    //Um auxiliar aloca espaço para um Nó padrão
+    //e retorna um endereço para o mesmo.
     return aux;
 }
+
 void destroy_node_p(node_p* n){
+    //Recebe o endereço de um Nó padrão e desaloca o espaço ocupado por ele.
     free(n);
 }
+
+//Registro de dados do cliente para a
+//impressão do relatório final, contendo:
+//cpf do cliente, o numero de operações feitas no cpf,
+// o balanço da conta do cliente e um ponteiro para o próximo Nó.
 struct node_l{
     long long cpf,nop,balance;
     struct node_l* next;
 };
+//Define o registro de dados para impressão do relatório final como Nó de lista.
 typedef struct node_l node_l;
+
 node_l* create_node_l(){
     node_l* n;
     n=malloc(sizeof(node_l));
+    //Um auxiliar aloca espaço para um Nó de lista
     n->nop=1;
+    //Inicia o número de operações desse Nó com uma operaço
     return n;
+    //Retorna o endereço do Nó alocado
 }
+
 void destroy_node_l(node_l* n){
+    //Recebe o endereço de um Nó de Lista.
     free(n);
+    //Desaloca o espaço ocupado por esse Nó na memória.
 }
+
+//Registro de dados de um pilha que contém:
+//Um ponteiro para o topo da pilha e um contador
+//para o número de elementos nessa pilha.
 struct stack{
     node_p* top;
     long long counter;
 };
+//Define o Registro de dados da pilha como Pilha.
 typedef struct stack stack;
+
 stack* create_stack(){
-    //Um auxiliar aloca espaço espaço para uma Pilha vazia e retorna o seu endereço.
+    //Um auxiliar aloca espaço para uma pilha vazia e retorna o seu endereço.
     stack* aux;
     aux=malloc(sizeof(stack));
     aux->top=NULL;
@@ -46,25 +72,37 @@ stack* create_stack(){
     return aux;
 }
 void add_stack(stack* s,node_p* n){
+    //Recebe o endereço de um Nó padrão e uma pilha.
     n->next=s->top;
     s->top=n;
+    //Coloca o Nó no topo da pilha.
     s->counter++;
+    //Adiciona mais um ao contador de elementos da pilha.
 }
+
 node_p* remove_stack(stack* s){
+    //Recebe o endereço de uma determinada pilha para ser desempilhada.
     node_p* aux;
+    //Quarda o endereço do elemento do topo da pilha em um auxiliar.
     aux=s->top;
     s->top=aux->next;
+    //Atualiza o topo da pilha.
     s->counter--;
+    //Retira um da quantidade de elementos da pilha.
     return aux;
+    //retorna o endereço do elemento removido.
 }
 void destroy_stack(stack* s){
+    //Recebe o endereço de uma determinada pilha.
     node_p* n1;
     for(int i=0;i<3;i++)
         while(s->top!=NULL){
             n1=remove_stack(s);
             destroy_node_p(n1);
         }
+    //Desaloca o espaço na memória de todos os elementos presentes na pilha.
     free(s);
+    //Desaloca o espaço ocupado pela própria pilha.
 }
 struct queue{
     node_p* data;
@@ -131,11 +169,7 @@ void search_list(long long valor,long long cpf,list* l){
     //maior do que do próvável novo nó.Se sim,adiciona um nó na primeira posição da lista.
     //Se não,verifica se o cpf do primeiro elemento é igual ao do cpf próvalvel nó.Se sim,
     //apenas altera o saldo e incrementa o número de operações do primeiro elemento da lista.
-    //Se não,é feito um loop com um auxiliar percorrendo a lista até que se chegue no ultimo 
-    //elemento ou que o cpf do próximo elemento seja deixe de ser menor que o cpf do possível 
-    //novo elemento.Caso o auxiliar tenha chegado  ao ultimo elemento ou que o cpf do próximo
-    //seja maior,adiciona um nó logo após o nó apontado pelo auxiliar.Caso contrário,apenas
-    //altera o saldo e incrementa o número de operações do próximo do auxiliar.Não retorna nada.
+    //Se não,é feito um loop para percorrer a lista até que
     node_l* aux;
     node_l* n;
     if(l->first==NULL || l->first->cpf>cpf){
@@ -169,8 +203,6 @@ void search_list(long long valor,long long cpf,list* l){
     }
 }
 node_p* add_list(list* l,stack* s){
-    //retira um nó da pilha e verifica os possíveis casos de mudança na lista baseada
-    //na operação bancária armazenda no nó.Retorna o nó padrão retirado da pilha.
     node_p* n;
     n=remove_stack(s);
     switch(n->op){
@@ -190,7 +222,6 @@ node_p* add_list(list* l,stack* s){
 }
 
 node_l* remove_list_first(list* l){
-    //Retira e retorna o primeiro elemento da lista.
     node_l* aux;
     aux=l->first;
     l->first=aux->next;
