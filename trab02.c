@@ -6,11 +6,16 @@ struct node_p{
     struct node_p* next;
 };
 typedef struct node_p node_p;
+
+/*Um auxiliar aloca um nó padrão e retorna
+ o endereço alocado*/
 node_p* create_node_p(){
     node_p* aux;
     aux=malloc(sizeof(node_p));
     return aux;
 }
+/*Recebe o endereço de um Nó padrão
+e desaloca o espaço ocupado por ele.*/
 void destroy_node_p(node_p* n){
     free(n);
 }
@@ -19,12 +24,18 @@ struct node_l{
     struct node_l* next;
 };
 typedef struct node_l node_l;
+
+/*Um auxiliar aloca um Nó pipipi,
+com 1 operação efetuada pelo cliente
+e retorna o endereço alocado.*/
 node_l* create_node_l(){
     node_l* n;
     n=malloc(sizeof(node_l));
     n->nop=1;
     return n;
 }
+/*Recebe o endereço de um Nó pipipi
+e desaloca o espaço ocupado por ele.*/
 void destroy_node_l(node_l* n){
     free(n);
 }
@@ -33,6 +44,9 @@ struct stack{
     long long counter;
 };
 typedef struct stack stack;
+
+/*Um auxiliar aloca espaço para uma Pilha
+vazia e retorna o seu endereço;*/
 stack* create_stack(){
     stack* aux;
     aux=malloc(sizeof(stack));
@@ -40,11 +54,16 @@ stack* create_stack(){
     aux->counter=0;
     return aux;
 }
+/*Recebe o endereço de um Nó padrão e uma Pilha
+para ser empilhada, não retorna nada*/
 void add_stack(stack* s,node_p* n){
     n->next=s->top;
     s->top=n;
     s->counter++;
 }
+/*Recebe o endereço de uma Pilha, remove
+o elemento de seu topo e retorna o endereço
+do elemento removido*/
 node_p* remove_stack(stack* s){
     node_p* aux;
     aux=s->top;
@@ -52,6 +71,9 @@ node_p* remove_stack(stack* s){
     s->counter--;
     return aux;
 }
+/*Recebe o endereço de uma Pilha e após desalocar
+todos os elementos de sua estrutura, também desaloca
+o espaço ocupado pela mesma.*/
 void destroy_stack(stack* s){
     node_p* n1;
     for(int i=0;i<3;i++)
