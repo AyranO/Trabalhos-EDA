@@ -1,38 +1,53 @@
 #include<stdio.h>
 #include<stdlib.h>
+//Registro para os dados do cliente.
 struct node_p{
     long long cpfc,cpft,valor;
     char op;
     struct node_p* next;
 };
 typedef struct node_p node_p;
+
+//Aloca um registro do tipo node_p e retorna o ponteiro para o registro.
 node_p* create_node_p(){
     node_p* aux;
     aux=malloc(sizeof(node_p));
     return aux;
 }
+
+//Desaloca um registro node_p.
 void destroy_node_p(node_p* n){
     free(n);
 }
+
+//Registro de dados do cliente para balanço final.
 struct node_l{
     long long cpf,nop,balance;
     struct node_l* next;
 };
 typedef struct node_l node_l;
+
+//Aloca espaço para um node_l e retorna o seu ponteiro.
 node_l* create_node_l(){
     node_l* n;
     n=malloc(sizeof(node_l));
     n->nop=1;
     return n;
 }
+
+//Desaloca um registro node_l.
 void destroy_node_l(node_l* n){
     free(n);
 }
+
+//Registro da Pilha.
 struct stack{
     node_p* top;
     long long counter;
 };
 typedef struct stack stack;
+
+//Aloca espaço para uma Pilha e retorna o seu ponteiro.
 stack* create_stack(){
     stack* aux;
     aux=malloc(sizeof(stack));
@@ -40,11 +55,15 @@ stack* create_stack(){
     aux->counter=0;
     return aux;
 }
+
+//Adiciona um node_p no topo da pilha.
 void add_stack(stack* s,node_p* n){
     n->next=s->top;
     s->top=n;
     s->counter++;
 }
+
+//Remove um node_p da pilha e retorna um ponteiro para o mesmo. 
 node_p* remove_stack(stack* s){
     node_p* aux;
     aux=s->top;
@@ -52,6 +71,7 @@ node_p* remove_stack(stack* s){
     s->counter--;
     return aux;
 }
+//Desaloca toda a estrutura da Pilha.
 void destroy_stack(stack* s){
     node_p* n1;
     for(int i=0;i<3;i++)
@@ -111,6 +131,24 @@ list* create_list(){
     l->counter=0;
     return l;
 }
+node_p* add_list(list* l,stack* s){
+    node_p* n;
+    n=remove_stack(s);
+    switch(n->op){
+        case 'S':
+            search_list(-n->valor,n->cpfc,l);
+            break;
+        case 'D':
+            search_list(n->valor*0,n->cpfc,l);
+            search_list(n->valor,n->cpft,l);
+            break;
+        case 'T':
+            search_list(-n->valor,n->cpfc,l);
+            search_list(n->valor,n->cpft,l);
+            break;
+    }
+    return n;
+}
 void search_list(long long valor,long long cpf,list* l){
     node_l* aux;
     node_l* n;
@@ -144,40 +182,13 @@ void search_list(long long valor,long long cpf,list* l){
         }
     }
 }
-node_p* add_list(list* l,stack* s){
-    node_p* n;
-    n=remove_stack(s);
-    switch(n->op){
-        case 'S':
-            search_list(-n->valor,n->cpfc,l);
-            break;
-        case 'D':
-            search_list(0,n->cpfc,l);
-            search_list(n->valor,n->cpft,l);
-            break;
-        case 'T':
-            search_list(-n->valor,n->cpfc,l);
-            search_list(n->valor,n->cpft,l);
-            break;
-    }
-    return n;
-}
-
 node_l* remove_list_first(list* l){
     node_l* aux;
     aux=l->first;
     l->first=aux->next;
     return aux;
 }
-void destroy_list(list* l){
-    node_l* aux;
-    while(l->first!=NULL){
-        aux=remove_list_first(l);
-        destroy_node_l(aux);
-    }
-    free(l);
-}
-void display_partial(list* l,stack* s[3]){
+void display_partial(list* l,stack* s[3],long long n){
     printf("-:| RELATÓRIO PARCIAL |:-\n3\n");
     node_p* n1;
     for(long long i=0;i<3;i++){
@@ -190,7 +201,7 @@ void display_partial(list* l,stack* s[3]){
     }
 }
 void display_final(list* l){
-    printf("-:| RELATÓRIO FINAL|:-\n %lli\n",l->counter);
+    printf("-:|RELATÓRIO FINAL |:-\n%lli\n",l->counter);
     node_l* n;
     while(l->first!=NULL){
         n=remove_list_first(l);
@@ -215,11 +226,10 @@ int main(){
         add_stack(s[i%3],remove_queue(f));
     list* l;
     l=create_list();
-    display_partial(l,s);
+    display_partial(l,s,n);
     display_final(l);
     for(int i=0;i<3;i++)
         destroy_stack(s[i]);
     destroy_queue(f);
-    destroy_list(l);
     return 0;
 }
